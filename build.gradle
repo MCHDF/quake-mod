@@ -1,6 +1,7 @@
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
+	id 'com.gradleup.shadow' version '9.6.1'
 }
 
 repositories {
@@ -9,6 +10,13 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+}
+
+configurations {
+	// 모드 jar 안에 함께 넣을 외부 라이브러리. 여기에 넣은 것만 shadowJar에 포함됩니다.
+	// (Minecraft, Fabric Loader, Fabric API는 게임에 이미 있으므로 넣지 않습니다.)
+	shade
+	implementation.extendsFrom shade
 }
 
 loom {
@@ -61,6 +69,46 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
 	}
+}
+
+shadowJar {
+	archiveClassifier = 'all'
+	configurations = [project.configurations.shade]
+	from sourceSets.client.output
+	from("LICENSE") {
+		rename { "${it}_quake" }
+	}
+}
+
+// 모드를 넣을 클라이언트 mods 폴더. 컴퓨터마다 달라서 저장소에 올리지 않는 local.properties에 적습니다.
+//   modsDir=/Users/<이름>/MultiMC.app/Data/instances/26.3/.minecraft/mods
+def localProps = new Properties()
+def localPropsFile = file('local.properties')
+if (localPropsFile.exists()) {
+	localPropsFile.withInputStream { localProps.load(it) }
+}
+def modsDir = localProps.getProperty('modsDir')
+
+tasks.register('removeDeployedMod', Delete) {
+	group = 'quake'
+	description = 'mods 폴더에 있던 이전 Quake 모드 jar를 지웁니다.'
+	enabled = modsDir != null
+	if (modsDir != null) {
+		delete fileTree(modsDir) { include 'quake-*.jar' }
+	}
+}
+
+tasks.register('deployMod', Copy) {
+	group = 'quake'
+	description = 'shadowJar 결과물을 local.properties의 modsDir로 복사합니다.'
+	enabled = modsDir != null
+	dependsOn 'removeDeployedMod'
+	from tasks.shadowJar
+	into modsDir ?: layout.buildDirectory.dir('deploy-disabled')
+}
+
+tasks.named('build') {
+	finalizedBy 'deployMod'
 }
 
 // configure the maven publication
