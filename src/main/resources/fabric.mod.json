@@ -3,7 +3,7 @@
 	"id": "quake",
 	"version": "${version}",
 	"name": "Quake",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Quake 미니게임 서버 전용 클라이언트 모드. Quake 플러그인이 있는 서버에 접속했을 때만 동작합니다.",
 	"authors": [
 		"MCHDF"
 	],
@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"moe.mchdf.QuakeMod"
+			"moe.mchdf.quake.QuakeMod"
 		],
 		"client": [
-			"moe.mchdf.client.QuakeModClient"
+			"moe.mchdf.quake.client.QuakeModClient"
 		]
 	},
 	"mixins": [
