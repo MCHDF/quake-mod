@@ -9,10 +9,13 @@ import net.minecraft.resources.Identifier;
  */
 public final class QuakeProtocol {
 	/** 패킷 형식이 바뀌면 올립니다. 서버와 다르면 모드를 활성화하지 않습니다. */
-	public static final int VERSION = 1;
+	public static final int VERSION = 2;
 
 	/** 핸드셰이크 채널. 클라 → 서버(모드 버전), 서버 → 클라(서버 버전, 수락 여부) 모두 이 채널을 씁니다. */
 	public static final Identifier HANDSHAKE = QuakeMod.id("handshake");
+
+	/** 사이드바 채널. 서버 → 클라: 표시 여부, 제목, 줄 목록(텍스트 컴포넌트 JSON). */
+	public static final Identifier SIDEBAR = QuakeMod.id("sidebar");
 
 	private QuakeProtocol() {
 	}

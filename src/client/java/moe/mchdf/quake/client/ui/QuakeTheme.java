@@ -28,6 +28,11 @@ public final class QuakeTheme {
 	public static final int BUTTON_HOVER = 0xFF323B4B;
 	public static final int BUTTON_BORDER = 0xFF3A4456;
 
+	// HUD (게임 화면 위에 상시 표시되므로 반투명하게)
+	public static final int HUD_BACKGROUND = 0x80161A22;   // 본문 배경 (50%)
+	public static final int HUD_HEADER = 0xB01F2530;       // 제목 줄 배경 (70%)
+	public static final int HUD_PADDING = 4;
+
 	// 크기
 	public static final int HEADER_HEIGHT = 20;
 	public static final int PADDING = 10;
