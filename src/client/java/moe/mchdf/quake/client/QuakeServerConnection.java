@@ -47,7 +47,9 @@ public final class QuakeServerConnection {
 				(payload, context) -> onReply(payload, context.client()));
 
 		// 채널 등록 알림이 접속 완료보다 먼저 올 수도, 나중에 올 수도 있어 두 시점 모두 확인합니다.
-		ClientPlayConnectionEvents.JOIN.register((listener, sender, client) -> trySendHandshake());
+		// JOIN은 Fabric이 서버에 minecraft:register(클라가 받을 수 있는 채널 목록)를 보내기 전에 호출됩니다.
+		// 바로 보내면 서버 응답이 채널 등록보다 먼저 처리되어 버려지므로, 다음 작업으로 미뤄 등록 패킷 뒤에 보냅니다.
+		ClientPlayConnectionEvents.JOIN.register((listener, sender, client) -> client.execute(QuakeServerConnection::trySendHandshake));
 		ServerboundPlayChannelEvents.REGISTER.register((listener, sender, client, channels) -> {
 			if (containsHandshake(channels)) {
 				client.execute(QuakeServerConnection::trySendHandshake);
