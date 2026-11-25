@@ -6,5 +6,6 @@ public class QuakeModClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		QuakeServerConnection.register();
+		QuakeTestKey.register();
 	}
 }
