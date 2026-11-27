@@ -22,6 +22,7 @@ public final class QuakeTheme {
 	public static final int TEXT_ON_ACCENT = 0xFF1A1205;
 	public static final int SUCCESS = 0xFF5BD68A;
 	public static final int DANGER = 0xFFEF5B5B;
+	public static final int HIGHLIGHT = 0xFFFFC83D;       // 노랑 강조 (선택 표시, 미리보기 버튼)
 
 	// 보조 버튼
 	public static final int BUTTON = 0xFF252C38;
