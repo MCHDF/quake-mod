@@ -2,6 +2,7 @@ package moe.mchdf.quake.client;
 
 import moe.mchdf.quake.client.hud.HitMarkerHud;
 import moe.mchdf.quake.client.hud.SidebarHud;
+import moe.mchdf.quake.client.screen.SettingsScreen;
 import net.fabricmc.api.ClientModInitializer;
 
 public class QuakeModClient implements ClientModInitializer {
@@ -11,5 +12,6 @@ public class QuakeModClient implements ClientModInitializer {
 		QuakeTestKey.register();
 		SidebarHud.register();
 		HitMarkerHud.register();
+		SettingsScreen.register();
 	}
 }

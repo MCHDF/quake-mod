@@ -3,6 +3,7 @@ package moe.mchdf.quake;
 import moe.mchdf.quake.network.HandshakeC2SPayload;
 import moe.mchdf.quake.network.HandshakeS2CPayload;
 import moe.mchdf.quake.network.HitS2CPayload;
+import moe.mchdf.quake.network.OpenSettingsS2CPayload;
 import moe.mchdf.quake.network.SidebarS2CPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -21,6 +22,7 @@ public class QuakeMod implements ModInitializer {
 		PayloadTypeRegistry.clientboundPlay().register(HandshakeS2CPayload.TYPE, HandshakeS2CPayload.CODEC);
 		PayloadTypeRegistry.clientboundPlay().register(SidebarS2CPayload.TYPE, SidebarS2CPayload.CODEC);
 		PayloadTypeRegistry.clientboundPlay().register(HitS2CPayload.TYPE, HitS2CPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(OpenSettingsS2CPayload.TYPE, OpenSettingsS2CPayload.CODEC);
 	}
 
 	public static Identifier id(String path) {
