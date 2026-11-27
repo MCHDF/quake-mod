@@ -11,6 +11,7 @@ public class QuakeModClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		QuakeServerConnection.register();
 		QuakeTestKey.register();
+		QuickSettingsKey.register();
 		SidebarHud.register();
 		RailgunCrosshairHud.register();
 		HitMarkerHud.register();

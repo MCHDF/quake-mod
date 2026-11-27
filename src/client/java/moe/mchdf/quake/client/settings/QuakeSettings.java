@@ -144,6 +144,12 @@ public final class QuakeSettings {
 		return values[(value.ordinal() + 1) % values.length];
 	}
 
+	/** 목록의 이전 값. 처음 이전은 마지막입니다. */
+	public static <E extends Enum<E>> E previous(E value) {
+		E[] values = value.getDeclaringClass().getEnumConstants();
+		return values[(value.ordinal() + values.length - 1) % values.length];
+	}
+
 	private static QuakeSettings load() {
 		QuakeSettings settings = null;
 		if (Files.exists(FILE)) {

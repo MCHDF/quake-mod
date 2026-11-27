@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import moe.mchdf.quake.client.QuakeServerConnection;
+import moe.mchdf.quake.client.screen.SettingsScreen;
 import moe.mchdf.quake.client.settings.QuakeSettings;
 import moe.mchdf.quake.client.settings.QuakeSettings.CrosshairShape;
 import moe.mchdf.quake.client.ui.QuakeTheme;
@@ -61,6 +62,10 @@ public final class RailgunCrosshairHud {
 
 	private static void extract(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, HudElement vanilla) {
 		Minecraft client = Minecraft.getInstance();
+		if (client.gui.screen() instanceof SettingsScreen) {
+			// 빠른 설정이 열려 있으면 그 화면이 같은 자리에 미리보기를 그리므로 겹치지 않게 비웁니다.
+			return;
+		}
 		LocalPlayer player = client.player;
 		if (player == null || !QuakeServerConnection.isActive() || !client.options.getCameraType().isFirstPerson()
 				|| !isRailgun(player.getMainHandItem())) {
@@ -80,7 +85,16 @@ public final class RailgunCrosshairHud {
 		}
 	}
 
-	/** 설정 화면 미리보기용: 지정한 모양·색으로 조준점을 그립니다. */
+	/** 화면 가운데(바닐라 조준점 중심) 픽셀 */
+	public static int centerX(GuiGraphicsExtractor graphics) {
+		return PixelShape.centerX(graphics);
+	}
+
+	public static int centerY(GuiGraphicsExtractor graphics) {
+		return PixelShape.centerY(graphics);
+	}
+
+	/** 설정 화면 미리보기용: 지정한 모양·색으로 조준점을 그립니다. {@code cooldownProgress}가 음수면 링을 그리지 않습니다. */
 	public static void drawPreview(GuiGraphicsExtractor graphics, int cx, int cy, CrosshairShape shape, int color,
 							float cooldownProgress) {
 		shape(shape).draw(graphics, cx, cy, color, OUTLINE);

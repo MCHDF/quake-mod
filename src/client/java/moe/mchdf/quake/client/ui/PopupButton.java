@@ -10,7 +10,8 @@ import net.minecraft.network.chat.Component;
 
 /** 바닐라 돌 버튼 대신 평평한 색으로 그리는 팝업용 버튼입니다. */
 public class PopupButton extends AbstractButton {
-	public enum Style { PRIMARY, SECONDARY, GHOST }
+	/** PRIMARY 강조색 바탕, SECONDARY 회색 바탕, GHOST 바탕 없음, OUTLINE 테두리만 있고 글자는 노랑 */
+	public enum Style { PRIMARY, SECONDARY, GHOST, OUTLINE }
 
 	private final Style style;
 	private final Runnable onPress;
@@ -44,6 +45,13 @@ public class PopupButton extends AbstractButton {
 				graphics.fill(x, y, right, bottom, hover ? QuakeTheme.BUTTON_HOVER : QuakeTheme.BUTTON);
 				graphics.outline(x, y, getWidth(), getHeight(), QuakeTheme.BUTTON_BORDER);
 				textColor = QuakeTheme.TEXT;
+			}
+			case OUTLINE -> {
+				if (hover) {
+					graphics.fill(x, y, right, bottom, QuakeTheme.BUTTON);
+				}
+				graphics.outline(x, y, getWidth(), getHeight(), hover ? QuakeTheme.TEXT_MUTED : QuakeTheme.BUTTON_BORDER);
+				textColor = QuakeTheme.HIGHLIGHT;
 			}
 			default -> {
 				if (hover) {
