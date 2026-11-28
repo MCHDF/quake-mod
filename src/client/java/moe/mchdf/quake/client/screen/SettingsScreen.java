@@ -30,7 +30,8 @@ import net.minecraft.network.chat.Component;
  *
  * <p>항목은 지금 동작하는 설정만 둡니다. 다른 사람 빔·감도·효과음처럼 기능이 생기는 항목은 그때 줄을 추가합니다.
  * 위쪽 모드 설정(조준점 등)은 바꾸는 즉시 {@link QuakeSettings}에, 구분선 아래 사이드바·자동 다시 참여는
- * 바닐라 사용자와 같이 서버 DB에 저장됩니다({@link ServerSettings}).
+ * 바닐라 사용자와 같이 서버 DB에 저장됩니다({@link ServerSettings}). 효과음은 「효과음 설정」 버튼으로 여는
+ * 분류 화면({@link SoundSettingsScreen})에 따로 둡니다.
  */
 public class SettingsScreen extends Screen {
 	private static final int MARGIN = 12;
@@ -42,6 +43,7 @@ public class SettingsScreen extends Screen {
 	private static final int CONTROL_WIDTH = 112;
 	private static final int SWATCH = 13;
 	private static final int SWATCH_GAP = 4;
+	private static final int BUTTON_GAP = 4;
 	/** 모드(이 컴퓨터)에 저장하는 줄 수. 그 아래 줄은 서버에 저장합니다. */
 	private static final int CLIENT_ROWS = 4;
 	private static final int ROWS = 6;
@@ -81,7 +83,7 @@ public class SettingsScreen extends Screen {
 	}
 
 	private int panelHeight() {
-		return HEADER_HEIGHT + ROWS * ROW + 6 + QuakeTheme.BUTTON_HEIGHT + PAD * 2;
+		return HEADER_HEIGHT + ROWS * ROW + 6 + QuakeTheme.BUTTON_HEIGHT * 2 + BUTTON_GAP + PAD * 2;
 	}
 
 	private int panelTop() {
@@ -123,6 +125,9 @@ public class SettingsScreen extends Screen {
 		int buttonY = rowTop(ROWS) + 6;
 		addRenderableWidget(new PopupButton(panelLeft() + PAD, buttonY, PANEL_WIDTH - PAD * 2, QuakeTheme.BUTTON_HEIGHT,
 				Component.literal("적중 미리보기"), PopupButton.Style.OUTLINE, this::previewHit));
+		addRenderableWidget(new PopupButton(panelLeft() + PAD, buttonY + QuakeTheme.BUTTON_HEIGHT + BUTTON_GAP,
+				PANEL_WIDTH - PAD * 2, QuakeTheme.BUTTON_HEIGHT, Component.literal("효과음 설정 ▶"),
+				PopupButton.Style.OUTLINE, () -> minecraft.gui.setScreen(new SoundSettingsScreen(this))));
 	}
 
 	/** 값 줄의 ◀ ▶ 버튼. 값 글자는 {@link #extractRenderState}에서 가운데에 그립니다. */
