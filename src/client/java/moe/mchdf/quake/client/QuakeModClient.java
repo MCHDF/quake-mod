@@ -4,6 +4,7 @@ import moe.mchdf.quake.client.hud.HitMarkerHud;
 import moe.mchdf.quake.client.hud.RailgunCrosshairHud;
 import moe.mchdf.quake.client.hud.SidebarHud;
 import moe.mchdf.quake.client.screen.SettingsScreen;
+import moe.mchdf.quake.client.settings.ServerSettings;
 import net.fabricmc.api.ClientModInitializer;
 
 public class QuakeModClient implements ClientModInitializer {
@@ -16,5 +17,6 @@ public class QuakeModClient implements ClientModInitializer {
 		RailgunCrosshairHud.register();
 		HitMarkerHud.register();
 		SettingsScreen.register();
+		ServerSettings.register();
 	}
 }
