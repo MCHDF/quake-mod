@@ -7,6 +7,7 @@ import moe.mchdf.quake.client.hud.HitMarkerHud;
 import moe.mchdf.quake.client.hud.RailgunCrosshairHud;
 import moe.mchdf.quake.client.settings.QuakeSettings;
 import moe.mchdf.quake.client.settings.QuakeSettings.CrosshairColor;
+import moe.mchdf.quake.client.settings.ServerSettings;
 import moe.mchdf.quake.client.ui.ArrowButton;
 import moe.mchdf.quake.client.ui.ColorSwatchButton;
 import moe.mchdf.quake.client.ui.PopupButton;
@@ -27,8 +28,9 @@ import net.minecraft.network.chat.Component;
  * <p>여는 방법: 단축키(기본 F8, {@link QuickSettingsKey}), 설정 아이템 우클릭과 {@code /settings}
  * (서버가 {@link OpenSettingsS2CPayload}를 보냄). 닫기: ESC 또는 같은 단축키.
  *
- * <p>항목은 지금 동작하는 모드 사용자 설정만 둡니다. 다른 사람 빔·감도·효과음처럼 기능이 생기는 항목은
- * 그때 줄을 추가합니다. 값은 바꾸는 즉시 {@link QuakeSettings}에 저장됩니다.
+ * <p>항목은 지금 동작하는 설정만 둡니다. 다른 사람 빔·감도·효과음처럼 기능이 생기는 항목은 그때 줄을 추가합니다.
+ * 위쪽 모드 설정(조준점 등)은 바꾸는 즉시 {@link QuakeSettings}에, 구분선 아래 사이드바·자동 다시 참여는
+ * 바닐라 사용자와 같이 서버 DB에 저장됩니다({@link ServerSettings}).
  */
 public class SettingsScreen extends Screen {
 	private static final int MARGIN = 12;
@@ -40,7 +42,9 @@ public class SettingsScreen extends Screen {
 	private static final int CONTROL_WIDTH = 112;
 	private static final int SWATCH = 13;
 	private static final int SWATCH_GAP = 4;
-	private static final int ROWS = 4;
+	/** 모드(이 컴퓨터)에 저장하는 줄 수. 그 아래 줄은 서버에 저장합니다. */
+	private static final int CLIENT_ROWS = 4;
+	private static final int ROWS = 6;
 
 	/** 가운데 미리보기: 쿨다운 1.8초가 차오른 뒤 잠깐 쉬기를 반복합니다. */
 	private static final long COOLDOWN_LOOP_MS = 2600;
@@ -111,6 +115,10 @@ public class SettingsScreen extends Screen {
 				() -> settings.setHitMarkerShape(QuakeSettings.next(settings.hitMarkerShape())));
 		Runnable toggleRing = () -> settings.setCooldownRing(!settings.cooldownRing());
 		cycle(3, toggleRing, toggleRing);
+		Runnable toggleSidebar = () -> ServerSettings.toggle(ServerSettings.SIDEBAR);
+		cycle(4, toggleSidebar, toggleSidebar);
+		Runnable toggleRejoin = () -> ServerSettings.toggle(ServerSettings.AUTO_REJOIN);
+		cycle(5, toggleRejoin, toggleRejoin);
 
 		int buttonY = rowTop(ROWS) + 6;
 		addRenderableWidget(new PopupButton(panelLeft() + PAD, buttonY, PANEL_WIDTH - PAD * 2, QuakeTheme.BUTTON_HEIGHT,
@@ -170,9 +178,14 @@ public class SettingsScreen extends Screen {
 				.append(" 열기 · ESC 닫기");
 		graphics.text(font, hint, right - PAD - font.width(hint), titleY, QuakeTheme.TEXT_MUTED, false);
 
-		String[] labels = {"조준점", "조준점 색", "적중 표시", "쿨다운 표시"};
+		String[] labels = {"조준점", "조준점 색", "적중 표시", "쿨다운 표시", "사이드바", "자동 다시 참여"};
 		String[] values = {settings.crosshairShape().label(), null, hitMarkerLabel(),
-				settings.cooldownRing() ? "조준점 링" : "끄기"};
+				settings.cooldownRing() ? "조준점 링" : "끄기",
+				onOff(ServerSettings.bool(ServerSettings.SIDEBAR)),
+				onOff(ServerSettings.bool(ServerSettings.AUTO_REJOIN))};
+		// 모드 설정과 서버에 저장하는 설정 사이 구분선
+		int dividerY = rowTop(CLIENT_ROWS) - 1;
+		graphics.fill(left + PAD, dividerY, right - PAD, dividerY + 1, QuakeTheme.PANEL_BORDER);
 		for (int row = 0; row < ROWS; row++) {
 			int textY = rowTop(row) + (ROW - font.lineHeight) / 2;
 			graphics.text(font, labels[row], left + PAD, textY, QuakeTheme.HUD_LABEL, false);
@@ -181,6 +194,11 @@ public class SettingsScreen extends Screen {
 				graphics.text(font, values[row], valueX, textY, QuakeTheme.TEXT, false);
 			}
 		}
+	}
+
+	/** 서버 값을 아직 받지 못했으면 "…" */
+	private static String onOff(Boolean value) {
+		return value == null ? "…" : value ? "켜기" : "끄기";
 	}
 
 	/** 기획 시안 이름과 같게 "A 클래식 X"처럼 앞에 글자를 붙입니다. */
